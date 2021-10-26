@@ -1,0 +1,67 @@
+name: "Create UPM Branch"
+author: "hecomi"
+description: "Create release branches for Unity Package Manager"
+inputs:
+    main-branch:
+        description: "Main branch name"
+        required: false
+        default: "main"
+    upm-branch:
+        description: "UPM branch name"
+        required: false
+        default: "upm"
+    pkg-root-dir-path:
+        description: "Root directory path that contains package.json"
+        required: true
+    samples-dir:
+        description: "Directory name that contains samples"
+        required: false
+        default: "Samples"
+    root-files:
+        description: "File names that are imported from the main branch"
+        required: false
+        default: "README.md CHANGELOG.md LICENSE.md"
+runs:
+    using: "composite"
+    steps:
+        - name: Tag name
+          id: tag
+          run: echo ::set-output name=name::${GITHUB_REF#refs/tags/v}
+
+        - name: Git config
+          run: |
+              git config user.name "github-actions[bot]"
+              git config user.email "github-actions[bot]@users.noreply.github.com"
+
+        - name: Create UPM branches
+          run: |
+              git branch -D $UPM_BRANCH &> /dev/null || echo $UPM_BRANCH branch is not found
+              git subtree split -P "$PKG_ROOT_DIR_PATH" -b $UPM_BRANCH
+              git checkout $UPM_BRANCH
+              for file in $ROOT_FILES; do
+                  git checkout $MAIN_BRANCH $file &> /dev/null || echo $file is not found
+                  if [ -f $file ]; then
+                      cp package.json.meta $file.meta
+                      UUID=$(cat /proc/sys/kernel/random/uuid | tr -d '-')
+                      sed -i -e "s/guid:.*$/guid: $UUID/" $file.meta
+                      git add $file.meta
+                  fi
+              done
+              sed -i -e "s/\"version\":.*$/\"version\": \"$TAG\",/" package.json || echo package.json is not found
+              git mv $SAMPLES_DIR Samples~ &> /dev/null || echo $SAMPLES_DIR is not found
+              rm Samples.meta
+              git commit -am "release $TAG."
+              git push -f origin $UPM_BRANCH
+              git checkout -b $UPM_BRANCH@$TAG
+              git push -f origin $UPM_BRANCH@$TAG
+          env:
+              TAG: ${{ steps.tag.outputs.name }}
+              MAIN_BRANCH: ${{ inputs.main-branch }}
+              UPM_BRANCH: ${{ inputs.upm-branch }}
+              PKG_ROOT_DIR_PATH: ${{ inputs.pkg-root-dir-path }}
+              SAMPLES_DIR: ${{ inputs.samples-dir }}
+              ROOT_FILES: ${{ inputs.root-files }}
+branding:
+    icon: "package"
+    color: "lightgreen"
+
