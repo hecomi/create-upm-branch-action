@@ -31,6 +31,7 @@ runs:
           run: |
               git config user.name "github-actions[bot]"
               git config user.email "github-actions[bot]@users.noreply.github.com"
+          shell: bash
 
         - name: Create UPM branches
           run: |
@@ -53,6 +54,7 @@ runs:
               git push -f origin $UPM_BRANCH
               git checkout -b $UPM_BRANCH@$TAG
               git push -f origin $UPM_BRANCH@$TAG
+          shell: bash
           env:
               TAG: ${{ inputs.git-tag }}
               MAIN_BRANCH: ${{ inputs.main-branch }}
