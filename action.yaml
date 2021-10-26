@@ -2,6 +2,9 @@ name: "Create UPM Branch"
 author: "hecomi"
 description: "Create release branches for Unity Package Manager"
 inputs:
+    git-tag:
+        description: "Tag name like v1.0.0"
+        required: true
     main-branch:
         description: "Main branch name"
         required: false
@@ -24,10 +27,6 @@ inputs:
 runs:
     using: "composite"
     steps:
-        - name: Tag name
-          id: tag
-          run: echo ::set-output name=name::${GITHUB_REF#refs/tags/v}
-
         - name: Git config
           run: |
               git config user.name "github-actions[bot]"
@@ -55,7 +54,7 @@ runs:
               git checkout -b $UPM_BRANCH@$TAG
               git push -f origin $UPM_BRANCH@$TAG
           env:
-              TAG: ${{ steps.tag.outputs.name }}
+              TAG: ${{ inputs.git-tag }}
               MAIN_BRANCH: ${{ inputs.main-branch }}
               UPM_BRANCH: ${{ inputs.upm-branch }}
               PKG_ROOT_DIR_PATH: ${{ inputs.pkg-root-dir-path }}
