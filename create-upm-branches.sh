@@ -1,6 +1,6 @@
+git checkout $MAIN_BRANCH
 git config user.name "github-actions[bot]"
 git config user.email "github-actions[bot]@users.noreply.github.com"
-git branch -D $UPM_BRANCH &> /dev/null || echo $UPM_BRANCH branch is not found
 git subtree split -P "$PKG_ROOT_DIR_PATH" -b $UPM_BRANCH
 git checkout $UPM_BRANCH
 for file in $ROOT_FILES; do
@@ -15,7 +15,7 @@ done
 sed -i -e "s/\"version\":.*$/\"version\": \"$TAG\",/" package.json || echo package.json is not found
 git mv $SAMPLES_DIR Samples~ &> /dev/null || echo $SAMPLES_DIR is not found
 rm Samples.meta
-git commit -am "release $TAG."
+git commit -m "release $TAG."
 git push -f origin $UPM_BRANCH
 git checkout -b $UPM_BRANCH@$TAG
 git push -f origin $UPM_BRANCH@$TAG
