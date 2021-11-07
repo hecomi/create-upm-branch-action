@@ -97,7 +97,7 @@ Parameters
     - The UPM branch name. The default is `upm`.
 - pkg-root-dir-path
     - The root path for packaging. Most likely it will be `Assets` or `Assets/[YourPluginName]`.
-- sample-dir
+- samples-dir
     - The name of the directory containing the samples. The default is `Samples`.
 - root-files
     - Give a space-separated list of files, such as *README.md*, that are located in the root directory and to be included in the package. The default is `README.md LICENSE.md CHANGELOG.md`.
