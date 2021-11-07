@@ -14,7 +14,7 @@ for file in $ROOT_FILES; do
 done
 sed -i -e "s/\"version\":.*$/\"version\": \"$TAG\",/" package.json || echo package.json is not found
 git mv $SAMPLES_DIR Samples~ &> /dev/null || echo $SAMPLES_DIR is not found
-rm Samples.meta
+rm $SAMPLES_DIR.meta
 git commit -m "release $TAG."
 git push -f origin $UPM_BRANCH
 git checkout -b $UPM_BRANCH@$TAG
