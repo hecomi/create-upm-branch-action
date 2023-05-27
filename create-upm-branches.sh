@@ -13,6 +13,7 @@ for file in $ROOT_FILES; do
     fi
 done
 sed -i -e "s/\"version\":.*$/\"version\": \"$TAG\",/" package.json || echo package.json is not found
+git add package.json
 git mv $SAMPLES_DIR Samples~ &> /dev/null || echo $SAMPLES_DIR is not found
 git rm $SAMPLES_DIR.meta
 git commit -m "release $TAG."
