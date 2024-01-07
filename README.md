@@ -56,6 +56,10 @@ jobs:
           pkg-root-dir-path: Assets/[YourPluginName]
 ```
 
+This Action requires Write permissions to add branches to your repository. Please configure the settings as per the instructions on the following page: 
+
+- [Setting the permissions of the GITHUB_TOKEN for your repository](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository#setting-the-permissions-of-the-github_token-for-your-repository).
+
 When a tag like `v1.0.0` is pushed to the GitHub repository, it will automatically create a branch named `upm` with the following structure. The version number in the *package.json* is also updated automatically.
 
 ```
