@@ -6,7 +6,7 @@ This is a Github Action to create release branches for Unity Package Manager.
 How to Use
 ----------
 
-Prepare a main branch structure as shown below. I prefer this structure because it is easy to create an unitypackage as well.
+First, prepare a main branch structure as shown below. I recommend this structure because it also makes it easy to create a Unity package.
 
 ```
 <Repository>
@@ -25,7 +25,7 @@ Prepare a main branch structure as shown below. I prefer this structure because 
   ├── ...
 ```
 
-Next, create the following GitHub Actions.
+Then, create the following GitHub Actions.
 
 
 ```yaml
@@ -56,7 +56,7 @@ jobs:
           pkg-root-dir-path: Assets/[YourPluginName]
 ```
 
-,Then, when a tag like `v1.0.0` is pushed to the GitHub repository, it automatically creates an upm branch with the following structure. The version number in the *package.json* is also updated automatically.
+When a tag like `v1.0.0` is pushed to the GitHub repository, it will automatically create a branch named `upm` with the following structure. The version number in the *package.json* is also updated automatically.
 
 ```
 <Repository>
@@ -73,10 +73,9 @@ jobs:
   ├── ...
 ```
 
-Users will be able to use your plugin in Unity with a URL like the following:
+Users can then use your plugin in Unity with a URL like:
 
 - `https://github.com/[YourGitHubID]/[YourPluginName].git#upm`
-
 
 Demo
 ----
@@ -84,7 +83,6 @@ Demo
 This is used in the following project.
 
 - https://github.com/hecomi/uOSC
-
 
 Parameters
 ----------
@@ -101,3 +99,39 @@ Parameters
     - The name of the directory containing the samples. The default is `Samples`.
 - root-files
     - Give a space-separated list of files, such as *README.md*, that are located in the root directory and to be included in the package. The default is `README.md LICENSE.md CHANGELOG.md`.
+
+Publishing to npm
+-----------------
+
+To publish your plugin to npm, you aditionally need to:
+
+1. Create an npm account.
+2. Generate an Access Token for each repository. This token will be used as a secret named `NPM_TOKEN`.
+  - Refer to [Publishing Node.js packages on GitHub](https://docs.github.com/ja/actions/publishing-packages/publishing-nodejs-packages) for more details.
+3. Add the following lines to your GitHub Actions:
+
+```yaml
+name: Update-UPM-Branch
+...
+jobs:
+  update:
+    ...
+    steps:
+      ...
+
+      - name: Tag name
+        ...
+
+      - name: Create UPM Branches
+        ...
+
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: NPM publish
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+```
